@@ -11,5 +11,7 @@ class Object:
         # self.rect.center = settings.WindowCenter
         self.rect.x, self.rect.y = position
         self.srcImage = texture
+
+        
     def render(self, screen : pygame.Surface):
         screen.blit(self.image, self.rect)

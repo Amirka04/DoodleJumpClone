@@ -11,13 +11,10 @@ import settings
 
 # functions
 def scrollBackGround(infinityBackground : list[Object], speed):
-    print("=" * 20)
     for i in range(0, len(infinityBackground)):
+        if infinityBackground[i].rect.y > settings.WindowSize[1] * 2:
+            infinityBackground[i].rect.y = 1 - infinityBackground[i].rect.h
         infinityBackground[i].rect.y += speed
-        if infinityBackground[i].rect.y > settings.WindowSize[1]:
-            tmpBG = infinityBackground[ (i + 1) % len(infinityBackground) ]
-            infinityBackground[i].rect.y = tmpBG.rect.y - tmpBG.rect.height
-        print(f"Iteration {i} : coordinate {infinityBackground[i].rect.x, infinityBackground[i].rect.y}")
 
 
 
@@ -26,8 +23,8 @@ def centeredObject(object1_in : list|tuple, object2_to : list|tuple):
 
 
 
-def setScore(font, score):
-    return font.render("Score: " + str(score), 1, (50, 50, 50))
+def setScore(font, text, score):
+    return font.render(text + str(score), 1, (50, 50, 50))
 
 
 
@@ -45,7 +42,7 @@ def generatePlatform(platforms : list[Object], example : Object):
 def GetCollisionPlatform(platforms : list[Object], player : Object, velocity : int):
     if velocity > 0:
         for i in platforms:
-            if player.rect.colliderect(i.rect) and player.rect.y + player.rect.height > i.rect.y - i.rect.height:
+            if player.rect.colliderect(i.rect) and (player.rect.y + player.rect.height / 2.0 < i.rect.y - i.rect.height / 2.0):
                 return i
     return None
 
@@ -73,7 +70,7 @@ player.rect.y += 100
 
 
 infinityBackground = [
-                        # Object("src/bck.png", (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
+                        Object("src/bck.png", (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
                         Object("src/bck.png", (0, 0 - settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
                         Object("src/bck.png", (0, 0), pygame.Vector2(settings.WindowSize))
                     ]
@@ -90,12 +87,13 @@ platformObject.rect.y = player.rect.y + player.rect.height + 40
 platforms = []
 platforms.append(platformObject)
 
+
 for i in range(0, 15):
     generatePlatform(platforms, platformObject)
 
 
-
 settings.fontGame = pygame.font.Font("src/ComicSans.ttf", 35)
+
 scoreLabel = settings.fontGame.render("Score: " + str(settings.score), 1, (50, 50, 50))
 startLabel = settings.fontGame.render("Press to Start", 1, (50, 50, 50))
 
@@ -112,6 +110,20 @@ while settings.isRunGame:
             if settings.gameState == "menu":
                 settings.gameState = "game"
                 settings.score = 0
+                
+                player.rect.x, player.rect.y = settings.WindowCenter
+                platformObject.rect.x, platformObject.rect.y = settings.WindowCenter
+                PowerJump = -10
+                platforms.clear()
+                platforms.append(platformObject)
+                for i in range(0, 15):
+                    generatePlatform(platforms, platformObject)
+
+                infinityBackground = [
+                        Object("src/bck.png", (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
+                        Object("src/bck.png", (0, 0 - settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
+                        Object("src/bck.png", (0, 0), pygame.Vector2(settings.WindowSize))
+                ]
 
     
     # получение состояния нажатий мыши и клавиши
@@ -131,12 +143,12 @@ while settings.isRunGame:
             bg.render(screen)
         scrollBackGround(infinityBackground, 3)
         screen.blit(startLabel, centeredObject(settings.WindowCenter, startLabel.get_size()))
-    
+        
+
     # Режим игры
     elif settings.gameState == "game":
-        for bg in infinityBackground:
-            bg.render(screen)
-        
+        infinityBackground[-1].render(screen)
+
         for platform in platforms:
             if platform.rect.y - platform.rect.h > settings.WindowSize[1]:
                 del platforms[ platforms.index(platform) ]
@@ -145,7 +157,7 @@ while settings.isRunGame:
 
         player.render(screen)
 
-        screen.blit(setScore(settings.fontGame, int(settings.score)), (0, 0))
+        screen.blit(setScore(settings.fontGame, "Score: ",int(settings.score)), (0, 0))
         
         platformMoved = GetCollisionPlatform(platforms, player, PowerJump)
         
@@ -159,10 +171,12 @@ while settings.isRunGame:
         player.rect.y += PowerJump if player.rect.y + PowerJump > settings.WindowCenter[1] / 2 else 0
         
         if lastPlatform:
-            deltaScroll = 25 if lastPlatform.rect.y < int(settings.WindowCenter[1] * 1.5) else 0
+            deltaScroll = -PowerJump if lastPlatform.rect.y < int(settings.WindowCenter[1] * 1.5) and PowerJump < 0 else 0
             for index in range(0, len(platforms)):
                 platforms[index].rect.y += deltaScroll
-            scrollBackGround(infinityBackground, deltaScroll)
+
+        if player.rect.y + player.rect.h > settings.WindowSize[1]:
+            settings.gameState = "menu"
 
         # move player
         if keyPressed[pygame.K_d] or keyPressed[pygame.K_RIGHT]:
