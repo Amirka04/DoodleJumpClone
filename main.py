@@ -62,6 +62,9 @@ pygame.display.set_icon(pygame.image.load("src/Icon.png"))
 
 # Player object
 player = Object("src/lik-left.png", settings.WindowCenter, (70, 70))
+flipMovement = "left"
+lastKeyPressed = 0
+prevKeyPressed = 1
 DefPowerJump = PowerJump = -15
 iSJumpVisible = True
 player.rect.x -= player.rect.size[0] / 2
@@ -83,6 +86,7 @@ cntPlatform = 15
 
 platformObject.rect.x = player.rect.x
 platformObject.rect.y = player.rect.y + player.rect.height + 40
+
 
 platforms = []
 platforms.append(platformObject)
@@ -136,7 +140,7 @@ while settings.isRunGame:
 
     # draw
     # ------
-
+    
     # Режим меню
     if settings.gameState == "menu":
         for bg in infinityBackground:
@@ -165,13 +169,12 @@ while settings.isRunGame:
             PowerJump = DefPowerJump
             settings.score += 1 if lastPlatform != platformMoved else 0
             lastPlatform = platformMoved
-        
 
         PowerJump += 0.5
         player.rect.y += PowerJump if player.rect.y + PowerJump > settings.WindowCenter[1] / 2 else 0
         
         if lastPlatform:
-            deltaScroll = -PowerJump if lastPlatform.rect.y < int(settings.WindowCenter[1] * 1.5) and PowerJump < 0 else 0
+            deltaScroll = -PowerJump # if lastPlatform.rect.y < int(settings.WindowCenter[1] * 1.5) and PowerJump < 0 else 0
             for index in range(0, len(platforms)):
                 platforms[index].rect.y += deltaScroll
 
@@ -181,13 +184,17 @@ while settings.isRunGame:
         # move player
         if keyPressed[pygame.K_d] or keyPressed[pygame.K_RIGHT]:
             player.rect.x += 10 if player.rect.x - player.rect.w / 2 < settings.WindowSize[0] else 0
+            if flipMovement != "right":
+                player.image = pygame.transform.flip(player.image, True, False)                
+                flipMovement = "right"
 
         if keyPressed[pygame.K_a] or keyPressed[pygame.K_LEFT]:
             player.rect.x -= 10 if player.rect.x + player.rect.w / 2 > 0 else 0
+            if flipMovement != "left":
+                player.image = pygame.transform.flip(player.image, True, False)
+                flipMovement = "left"
 
-
-    # ------
-    
+    # ------    
     settings.clock.tick(60)
     pygame.display.flip()
 
