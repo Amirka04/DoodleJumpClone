@@ -1,4 +1,10 @@
 import pygame
+
+# initialization pygame
+pygame.init()
+pygame.font.init()
+
+
 from pygame.locals import *
 from random import randrange
 
@@ -48,9 +54,7 @@ def GetCollisionPlatform(platforms : list[Object], player : Object, velocity : i
 
 
 
-# initialization pygame
-pygame.init()
-pygame.font.init()
+
 
 
 # screen

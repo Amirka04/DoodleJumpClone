@@ -1,7 +1,8 @@
 import pygame
 
 # global variable in game
-WindowSize = [600, 800] # размер окна
+WindowSize = [pygame.display.Info().current_w * (600 / pygame.display.Info().current_w), pygame.display.Info().current_h * (800 / pygame.display.Info().current_h)] # размер окна
+WindowSize = list(map(int, WindowSize))
 WindowCenter = int(WindowSize[0] / 2), int(WindowSize[1] / 2)
 bg_color = (150, 150, 150) # фоновый цвет
 isRunGame = True    # переменная контролирующая основной цикл
