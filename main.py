@@ -46,6 +46,8 @@ def generatePlatform(platforms : list[Object], example : Object):
 
 
 def GetCollisionPlatform(platforms : list[Object], player : Object, velocity : int):
+    global isJumpMusicPlay
+
     if velocity > 0:
         for i in platforms:
             if player.rect.colliderect(i.rect) and (player.rect.y + player.rect.height / 2.0 < i.rect.y - i.rect.height / 2.0):
@@ -76,9 +78,9 @@ player.rect.y += 100
 
 
 # sound
-backgroundSound = None
-jumpSound = pygame.mixer.Sound("");
-
+isBgSoundPlay = False
+jumpSound = pygame.mixer.Sound("src/jump.mp3");
+# backgroundSound = pygame.mixer.music.load("src/");
 
 
 infinityBackground = [
@@ -172,22 +174,28 @@ while settings.isRunGame:
 
         screen.blit(setScore(settings.fontGame, "Score: ",int(settings.score)), (0, 0))
         
+        # collision
         platformMoved = GetCollisionPlatform(platforms, player, PowerJump)
         
-        if platformMoved:
+        if platformMoved != None:
+            jumpSound.stop()            
             PowerJump = DefPowerJump
             settings.score += 1 if lastPlatform != platformMoved else 0
             lastPlatform = platformMoved
+            jumpSound.play(0)
 
         PowerJump += 0.5
-        player.rect.y += PowerJump if player.rect.y + PowerJump > settings.WindowCenter[1] / 2 else 0
-        
-        if lastPlatform:
-            deltaScroll = -PowerJump # if lastPlatform.rect.y < int(settings.WindowCenter[1] * 1.5) and PowerJump < 0 else 0
-            for index in range(0, len(platforms)):
-                platforms[index].rect.y += deltaScroll
+        # player.rect.y += PowerJump if player.rect.y + PowerJump > settings.WindowCenter[1] / 2 else 0
 
+        # if lastPlatform:
+        deltaScroll = -PowerJump
+        for index in range(0, len(platforms)):
+            platforms[index].rect.y += deltaScroll
+
+        # game over
         if player.rect.y + player.rect.h > settings.WindowSize[1]:
+            isGameOver = False
+            
             settings.gameState = "menu"
 
         # move player
