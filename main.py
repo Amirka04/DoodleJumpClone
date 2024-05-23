@@ -75,6 +75,11 @@ player.rect.x -= player.rect.size[0] / 2
 player.rect.y += 100
 
 
+# sound
+backgroundSound = None
+jumpSound = pygame.mixer.Sound("");
+
+
 
 infinityBackground = [
                         Object("src/bck.png", (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
