@@ -42,7 +42,6 @@ def generatePlatform(platforms : list[Object], example : Object):
     )
 
     platforms.append(ex)
-    
 
 
 def GetCollisionPlatform(platforms : list[Object], player : Object, velocity : int):
@@ -53,7 +52,6 @@ def GetCollisionPlatform(platforms : list[Object], player : Object, velocity : i
             if player.rect.colliderect(i.rect) and (player.rect.y + player.rect.height / 2.0 < i.rect.y - i.rect.height / 2.0):
                 return i
     return None
-
 
 
 
@@ -77,10 +75,12 @@ player.rect.x -= player.rect.size[0] / 2
 player.rect.y += 100
 
 
+
 # sound
-isBgSoundPlay = False
 jumpSound = pygame.mixer.Sound("src/jump.mp3");
-# backgroundSound = pygame.mixer.music.load("src/");
+pygame.mixer.music.load("src/JUMP_MENU.mp3");
+pygame.mixer.music.play(-1)
+
 
 
 infinityBackground = [
@@ -123,6 +123,7 @@ while settings.isRunGame:
             sys.exit()
         if event.type == pygame.KEYDOWN:
             if settings.gameState == "menu":
+                pygame.mixer.music.pause()
                 settings.gameState = "game"
                 settings.score = 0
                 
@@ -154,6 +155,8 @@ while settings.isRunGame:
     
     # Режим меню
     if settings.gameState == "menu":
+        pygame.mixer.music.unpause()
+        
         for bg in infinityBackground:
             bg.render(screen)
         scrollBackGround(infinityBackground, 3)
@@ -177,12 +180,13 @@ while settings.isRunGame:
         # collision
         platformMoved = GetCollisionPlatform(platforms, player, PowerJump)
         
-        if platformMoved != None:
-            jumpSound.stop()            
+        if platformMoved:
+            jumpSound.stop()
+            jumpSound.play()
             PowerJump = DefPowerJump
             settings.score += 1 if lastPlatform != platformMoved else 0
             lastPlatform = platformMoved
-            jumpSound.play(0)
+
 
         PowerJump += 0.5
         # player.rect.y += PowerJump if player.rect.y + PowerJump > settings.WindowCenter[1] / 2 else 0
@@ -193,9 +197,9 @@ while settings.isRunGame:
             platforms[index].rect.y += deltaScroll
 
         # game over
-        if player.rect.y + player.rect.h > settings.WindowSize[1]:
-            isGameOver = False
-            
+        if platforms[0].rect.y < 0 - platforms[0].rect.h / 2.0 - -PowerJump:
+            jumpSound.stop()
+            pygame.mixer.music.rewind()
             settings.gameState = "menu"
 
         # move player
