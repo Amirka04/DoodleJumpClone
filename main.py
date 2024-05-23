@@ -70,7 +70,6 @@ flipMovement = "left"
 lastKeyPressed = 0
 prevKeyPressed = 1
 DefPowerJump = PowerJump = -15
-iSJumpVisible = True
 player.rect.x -= player.rect.size[0] / 2
 player.rect.y += 100
 
@@ -111,6 +110,11 @@ settings.fontGame = pygame.font.Font("src/ComicSans.ttf", 35)
 
 scoreLabel = settings.fontGame.render("Score: " + str(settings.score), 1, (50, 50, 50))
 startLabel = settings.fontGame.render("Press to Start", 1, (50, 50, 50))
+
+absMyGame = pygame.font.Font("src/ComicSans.ttf", 18)
+WhereContact = absMyGame.render("Tg:", 1, (50, 50, 50))
+ContactMyFriend = absMyGame.render("Music: @Ellonity / @BEA$Y BO¥", 1, (50, 50, 50))
+DeveloperContact = absMyGame.render("Dev: @Linuxoid_1", 1, (50, 50, 50))
 
 
 # main loop game
@@ -161,6 +165,9 @@ while settings.isRunGame:
             bg.render(screen)
         scrollBackGround(infinityBackground, 3)
         screen.blit(startLabel, centeredObject(settings.WindowCenter, startLabel.get_size()))
+        screen.blit(WhereContact, (0, 0))
+        screen.blit(ContactMyFriend, (15, 24))
+        screen.blit(DeveloperContact, (15, 48))
         
 
     # Режим игры
