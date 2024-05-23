@@ -3,7 +3,7 @@ import pygame
 # initialization pygame
 pygame.init()
 pygame.font.init()
-
+pygame.mixer.init()
 
 from pygame.locals import *
 from random import randrange
