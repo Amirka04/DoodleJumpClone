@@ -177,7 +177,7 @@ while settings.isRunGame:
 
         for platform in platforms:
             if platform.rect.y - platform.rect.h > settings.WindowSize[1]:
-                del platforms[ platforms.index(platform) ]
+                del platforms[ 0 ]
                 generatePlatform(platforms, platformObject)
             platform.render(screen)
 

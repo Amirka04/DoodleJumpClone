@@ -3,7 +3,7 @@
         "title" : "Doodle Jump python clone",
         "size" : [600, 800]
     },
-    "source_dir" : "mods/src/",
+    "source_dir" : "src/",
     "source" : {
         "icon" : "Icon.png",
         "BackgroundSound" : "JUMP_MENU.mp3",
