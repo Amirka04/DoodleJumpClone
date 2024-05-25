@@ -197,9 +197,7 @@ while settings.isRunGame:
 
 
         PowerJump += 0.5
-        # player.rect.y += PowerJump if player.rect.y + PowerJump > settings.WindowCenter[1] / 2 else 0
-
-        # if lastPlatform:
+        
         deltaScroll = -PowerJump
         for index in range(0, len(platforms)):
             platforms[index].rect.y += deltaScroll
