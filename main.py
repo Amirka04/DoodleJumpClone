@@ -1,18 +1,19 @@
 import pygame
+from pygame.locals import *
+from random import randrange
+import sys
+# import my classes
+from Object import Object
+import settings
+from settings import global_setting
+
+
 
 # initialization pygame
 pygame.init()
 pygame.font.init()
 pygame.mixer.init()
 
-from pygame.locals import *
-from random import randrange
-
-import sys
-
-# import my classes
-from Object import Object
-import settings
 
 
 # functions
@@ -30,7 +31,7 @@ def centeredObject(object1_in : list|tuple, object2_to : list|tuple):
 
 
 def setScore(font, text, score):
-    return font.render(text + str(score), 1, (50, 50, 50))
+    return font.render(text + str(score), 1, global_setting.getUISetting("font_color"))
 
 
 
@@ -45,8 +46,6 @@ def generatePlatform(platforms : list[Object], example : Object):
 
 
 def GetCollisionPlatform(platforms : list[Object], player : Object, velocity : int):
-    global isJumpMusicPlay
-
     if velocity > 0:
         for i in platforms:
             if player.rect.colliderect(i.rect) and (player.rect.y + player.rect.height / 2.0 < i.rect.y - i.rect.height / 2.0):
@@ -57,15 +56,15 @@ def GetCollisionPlatform(platforms : list[Object], player : Object, velocity : i
 
 
 
-# screen
-screen = pygame.display.set_mode(settings.WindowSize)
-pygame.display.set_caption("Doodle Jump python clone")
-pygame.display.set_icon(pygame.image.load("src/Icon.png"))
 
+# screen
+screen = pygame.display.set_mode(global_setting.getWindowData("size"))
+pygame.display.set_caption(global_setting.getWindowData("title"))
+pygame.display.set_icon(pygame.image.load(global_setting.getSourceData("icon")))
 
 
 # Player object
-player = Object("src/lik-left.png", settings.WindowCenter, (70, 70))
+player = Object(global_setting.getSourceData("player_texture"), settings.WindowCenter, (70, 70))
 flipMovement = "left"
 lastKeyPressed = 0
 prevKeyPressed = 1
@@ -76,20 +75,20 @@ player.rect.y += 100
 
 
 # sound
-jumpSound = pygame.mixer.Sound("src/jump.mp3");
-pygame.mixer.music.load("src/JUMP_MENU.mp3");
+jumpSound = pygame.mixer.Sound(global_setting.getSourceData("JumpSound"));
+pygame.mixer.music.load(global_setting.getSourceData("BackgroundSound"));
 pygame.mixer.music.play(-1)
 
 
 
 infinityBackground = [
-                        Object("src/bck.png", (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
-                        Object("src/bck.png", (0, 0 - settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
-                        Object("src/bck.png", (0, 0), pygame.Vector2(settings.WindowSize))
+                        Object(global_setting.getSourceData("background_texture"), (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
+                        Object(global_setting.getSourceData("background_texture"), (0, 0 - settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
+                        Object(global_setting.getSourceData("background_texture"), (0, 0), pygame.Vector2(settings.WindowSize))
                     ]
 
 
-platformObject = Object("src/platform.png", settings.WindowCenter, (80, 15))
+platformObject = Object(global_setting.getSourceData("platform_texture"), settings.WindowCenter, (80, 15))
 lastPlatform = None
 isPlatformScroll = False
 cntPlatform = 15
@@ -106,15 +105,17 @@ for i in range(0, 15):
     generatePlatform(platforms, platformObject)
 
 
-settings.fontGame = pygame.font.Font("src/ComicSans.ttf", 35)
+settings.fontGame = pygame.font.Font(global_setting.getSourceData("font"), global_setting.getUISetting("font_size"))
 
-scoreLabel = settings.fontGame.render("Score: " + str(settings.score), 1, (50, 50, 50))
-startLabel = settings.fontGame.render("Press to Start", 1, (50, 50, 50))
 
-absMyGame = pygame.font.Font("src/ComicSans.ttf", 18)
-WhereContact = absMyGame.render("Tg:", 1, (50, 50, 50))
-ContactMyFriend = absMyGame.render("Music: @Ellonity / @BEA$Y BO¥", 1, (50, 50, 50))
-DeveloperContact = absMyGame.render("Dev: @Linuxoid_1", 1, (50, 50, 50))
+scoreLabel = settings.fontGame.render("Score: " + str(settings.score), 1, global_setting.getUISetting("font_color"))
+startLabel = settings.fontGame.render("Press to Start", 1, global_setting.getUISetting("font_color"))
+
+
+absMyGame = pygame.font.Font(global_setting.getSourceData("font"), 18)
+WhereContact = absMyGame.render("Tg:", 1, global_setting.getUISetting("font_color"))
+ContactMyFriend = absMyGame.render("Music: @Ellonity / @BEA$Y BO¥", 1, global_setting.getUISetting("font_color"))
+DeveloperContact = absMyGame.render("Dev: @Linuxoid_1", 1, global_setting.getUISetting("font_color"))
 
 
 # main loop game
@@ -140,9 +141,9 @@ while settings.isRunGame:
                     generatePlatform(platforms, platformObject)
 
                 infinityBackground = [
-                        Object("src/bck.png", (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
-                        Object("src/bck.png", (0, 0 - settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
-                        Object("src/bck.png", (0, 0), pygame.Vector2(settings.WindowSize))
+                            Object(global_setting.getSourceData("background_texture"), (0, 0 + settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
+                            Object(global_setting.getSourceData("background_texture"), (0, 0 - settings.WindowSize[1]), pygame.Vector2(settings.WindowSize)),
+                            Object(global_setting.getSourceData("background_texture"), (0, 0), pygame.Vector2(settings.WindowSize))
                 ]
 
     
@@ -182,7 +183,7 @@ while settings.isRunGame:
 
         player.render(screen)
 
-        screen.blit(setScore(settings.fontGame, "Score: ",int(settings.score)), (0, 0))
+        screen.blit(setScore(settings.fontGame, "Score: ", int(settings.score)), (0, 0))
         
         # collision
         platformMoved = GetCollisionPlatform(platforms, player, PowerJump)
