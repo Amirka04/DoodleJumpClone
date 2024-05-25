@@ -14,7 +14,7 @@
         "font" : "ComicSans.ttf"
     },
     "ui" : {
-        "font_color" : [150, 150, 150],
+        "font_color" : [40, 40, 40],
         "font_size" : 40
     }
 }
